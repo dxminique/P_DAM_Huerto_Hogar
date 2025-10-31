@@ -3,45 +3,46 @@ package com.example.p2_apli_huertohogar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.p2_apli_huertohogar.repository.InMemoryPedidoRepository
+import com.example.p2_apli_huertohogar.repository.InMemoryProductoRepository
+import com.example.p2_apli_huertohogar.repository.InMemoryUsuarioRepository
+import com.example.p2_apli_huertohogar.ui.screens.HomeScreen
+import com.example.p2_apli_huertohogar.ui.screens.PedidosScreen
+import com.example.p2_apli_huertohogar.ui.screens.ProductoScreen
 import com.example.p2_apli_huertohogar.ui.theme.P2_Apli_HuertoHogarTheme
-
+import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
+import com.example.p2_apli_huertohogar.viewModel.ProductoViewModel
+import com.example.p2_apli_huertohogar.viewModel.UsuarioViewModel
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             P2_Apli_HuertoHogarTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home"
+                    ) {
+                        composable("home") {
+                            HomeScreen(navController = navController)
+                        }
+                        composable("productos") {
+                            ProductoScreen(navController)
+                        }
+                        composable("pedidos")
+                        { PedidosScreen(navController) }
+
+
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    P2_Apli_HuertoHogarTheme {
-        Greeting("Android")
     }
 }
