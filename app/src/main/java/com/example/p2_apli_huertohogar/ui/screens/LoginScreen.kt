@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 
 
 
+
+
 @Composable
 fun LoginScreen(navController: NavController) {
     var correo by remember { mutableStateOf("") }
@@ -19,14 +21,17 @@ fun LoginScreen(navController: NavController) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFBFF886)
-    ) {
+    )
+    {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        )
+
+        {
             Text("Iniciar sesión", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(

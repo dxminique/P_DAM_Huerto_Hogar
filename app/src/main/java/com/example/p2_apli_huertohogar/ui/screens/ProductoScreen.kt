@@ -25,8 +25,8 @@ fun ProductoScreen(navController: NavController) {
     )
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFF95BF7D)
-    ) {
+        color = Color(0xFFF1F8E9))
+    {
         Column(modifier = Modifier.padding(16.dp)) {
             Text("Lista de productos", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(10.dp))
