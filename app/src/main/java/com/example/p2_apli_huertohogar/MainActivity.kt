@@ -40,6 +40,9 @@ class MainActivity : ComponentActivity() {
                         composable("registro") { RegistroScreen(navController) }
                         composable("productos") { ProductoScreen(navController) }
                         composable("pedidos") { PedidosScreen(navController) }
+                        composable("perfil") { PerfilScreen(navController) }
+                        composable("carrito") { CarritoScreen(navController) }
+
                     }
                 }
             }
