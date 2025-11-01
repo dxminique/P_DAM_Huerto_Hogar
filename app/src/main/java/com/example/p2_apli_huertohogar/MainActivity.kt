@@ -14,6 +14,8 @@ import com.example.p2_apli_huertohogar.repository.InMemoryUsuarioRepository
 import com.example.p2_apli_huertohogar.ui.screens.HomeScreen
 import com.example.p2_apli_huertohogar.ui.screens.PedidosScreen
 import com.example.p2_apli_huertohogar.ui.screens.ProductoScreen
+import com.example.p2_apli_huertohogar.ui.screens.LoginScreen
+import com.example.p2_apli_huertohogar.ui.screens.RegistroScreen
 import com.example.p2_apli_huertohogar.ui.theme.P2_Apli_HuertoHogarTheme
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
 import com.example.p2_apli_huertohogar.viewModel.ProductoViewModel
@@ -38,6 +40,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("pedidos")
                         { PedidosScreen(navController) }
+
+                        composable("login")
+                        { LoginScreen(navController) }
+
+                        composable("registro")
+                        { RegistroScreen(navController) }
+
 
 
                     }
