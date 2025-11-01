@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -23,7 +24,8 @@ fun BottomNavBar(navController: NavController) {
     val items = listOf(
         NavItem("home", "Inicio", Icons.Filled.Home),
         NavItem("productos", "Productos", Icons.Filled.List),
-        NavItem("pedidos", "Pedidos", Icons.Filled.ShoppingCart)
+        NavItem("pedidos", "Pedidos", Icons.Filled.ShoppingCart),
+        NavItem("login", "Perfil", Icons.Filled.AccountCircle)
     )
 
     NavigationBar(

@@ -19,7 +19,7 @@ class PedidoViewModel(
 
     val uiState: StateFlow<PedidoUiState> =
         repo.observeAll()
-            .mapgit status { list -> PedidoUiState(pedidos = list) }
+            .map { list -> PedidoUiState(pedidos = list) }
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5000),

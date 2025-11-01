@@ -16,43 +16,48 @@ import androidx.compose.ui.graphics.Color
 fun LoginScreen(navController: NavController) {
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color(0xFFBFF886)
     ) {
-        Text("Iniciar sesión", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(20.dp))
-        OutlinedTextField(
-            value = correo,
-            onValueChange = { correo = it },
-            label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth()
-
-        )
-
-
-
-        Spacer(modifier = Modifier.height(10.dp))
-        OutlinedTextField(
-            value = contrasena,
-            onValueChange = { contrasena = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Button(
-            onClick = { navController.navigate("home") },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Entrar")
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        TextButton(onClick = { navController.navigate("registro") }) {
-            Text("¿No tienes cuenta? Regístrate aquí")
+            Text("Iniciar sesión", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(20.dp))
+            OutlinedTextField(
+                value = correo,
+                onValueChange = { correo = it },
+                label = { Text("Correo electrónico") },
+                modifier = Modifier.fillMaxWidth()
+
+            )
+
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+            OutlinedTextField(
+                value = contrasena,
+                onValueChange = { contrasena = it },
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = { navController.navigate("home") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Entrar")
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            TextButton(onClick = { navController.navigate("registro") }) {
+                Text("¿No tienes cuenta? Regístrate aquí")
+            }
         }
     }
 }
