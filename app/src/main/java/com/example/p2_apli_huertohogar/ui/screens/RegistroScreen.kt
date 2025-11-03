@@ -9,14 +9,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.p2_apli_huertohogar.viewModel.RegistroNavEvent
+import com.example.p2_apli_huertohogar.viewModel.RegistroViewModel
 
 @Composable
-fun RegistroScreen(navController: NavController) {
-    var nombre by remember { mutableStateOf("") }
-    var correo by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
+fun RegistroScreen(
+    navController: NavController,
+    viewModel: RegistroViewModel = viewModel()
+) {
+
+    val uiState by viewModel.uiState.collectAsState()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.navEvent.collect { event ->
+            when (event) {
+                is RegistroNavEvent.NavigateToLogin -> {
+
+                    navController.navigate(event.route) {
+                        popUpTo("login") { inclusive = false }
+                    }
+                }
+            }
+        }
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFB9E4E5)
@@ -30,35 +48,47 @@ fun RegistroScreen(navController: NavController) {
         ) {
             Text("Crear cuenta", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(20.dp))
+
+
+            if (uiState.errorMensaje != null) {
+                Text(
+                    text = uiState.errorMensaje!!,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(bottom = 10.dp)
+                )
+            }
+
             OutlinedTextField(
-                value = nombre,
-                onValueChange = { nombre = it },
+                value = uiState.nombre,
+                onValueChange = { viewModel.onNombreChange(it) }, // <-- Llama al VM
                 label = { Text("Nombre completo") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = uiState.errorMensaje != null
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = correo,
-                onValueChange = { correo = it },
+                value = uiState.correo,
+                onValueChange = { viewModel.onCorreoChange(it) }, // <-- Llama al VM
                 label = { Text("Correo electrónico") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = uiState.errorMensaje != null
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = contrasena,
-                onValueChange = { contrasena = it },
+                value = uiState.contrasena,
+                onValueChange = { viewModel.onContrasenaChange(it) }, // <-- Llama al VM
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = uiState.errorMensaje != null
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { navController.navigate("login") },
+                onClick = { viewModel.onRegistroClick() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Registrarse")
             }
         }
     }
-
 }
