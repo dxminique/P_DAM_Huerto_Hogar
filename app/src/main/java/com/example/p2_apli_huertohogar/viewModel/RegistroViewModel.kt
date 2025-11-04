@@ -14,7 +14,7 @@ data class RegistroUiState(
     val nombre: String = "",
     val correo: String = "",
     val contrasena: String = "",
-    val errorMensaje: String? = null // Estado para el mensaje de error
+    val errorMensaje: String? = null
 )
 
 
