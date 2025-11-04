@@ -20,9 +20,9 @@ data class Pedido(
 @Composable
 fun PedidosScreen(navController: NavController) {
     val pedidos = listOf(
-        Pedido(1, "2025-10-28", "Domique", 5600.0),
+        Pedido(1, "2025-10-28", "Juan Pérez", 5600.0),
         Pedido(2, "2025-10-29", "Juan Pérez", 8200.0),
-        Pedido(3, "2025-10-30", "María López", 3900.0)
+        Pedido(3, "2025-10-30", "Juan Pérez", 3900.0)
     )
     Surface(
         modifier = Modifier.fillMaxSize(),
