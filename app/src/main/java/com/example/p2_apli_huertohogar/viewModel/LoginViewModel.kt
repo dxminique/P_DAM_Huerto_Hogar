@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 data class LoginUiState(
     val correo: String = "",
     val contrasena: String = "",
-    val errorMensaje: String? = null // <-- Estado para tu mensaje de error
+    val errorMensaje: String? = null 
 )
 
 // 2. Define los Eventos de Navegación (para desacoplar)
@@ -49,7 +49,7 @@ class LoginViewModel : ViewModel() {
             _uiState.update {
                 it.copy(errorMensaje = "Debes rellenar todos los campos")
             }
-            return // Detiene la ejecución
+            return 
         }
 
 
