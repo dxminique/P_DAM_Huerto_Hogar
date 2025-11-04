@@ -60,7 +60,7 @@ fun RegistroScreen(
 
             OutlinedTextField(
                 value = uiState.nombre,
-                onValueChange = { viewModel.onNombreChange(it) }, // <-- Llama al VM
+                onValueChange = { viewModel.onNombreChange(it) },
                 label = { Text("Nombre completo") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = uiState.errorMensaje != null
@@ -68,7 +68,7 @@ fun RegistroScreen(
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 value = uiState.correo,
-                onValueChange = { viewModel.onCorreoChange(it) }, // <-- Llama al VM
+                onValueChange = { viewModel.onCorreoChange(it) },
                 label = { Text("Correo electrónico") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = uiState.errorMensaje != null
@@ -76,7 +76,7 @@ fun RegistroScreen(
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 value = uiState.contrasena,
-                onValueChange = { viewModel.onContrasenaChange(it) }, // <-- Llama al VM
+                onValueChange = { viewModel.onContrasenaChange(it) }, 
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
