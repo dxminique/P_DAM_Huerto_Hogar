@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.lifecycle.viewmodel.compose.viewModel // <-- Importa esto
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.p2_apli_huertohogar.viewModel.LoginNavEvent
 import com.example.p2_apli_huertohogar.viewModel.LoginViewModel
 
