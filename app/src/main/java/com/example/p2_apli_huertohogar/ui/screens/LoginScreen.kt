@@ -16,18 +16,18 @@ import com.example.p2_apli_huertohogar.viewModel.LoginViewModel
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: LoginViewModel = viewModel() // <-- 1. Obtén la instancia del ViewModel
+    viewModel: LoginViewModel = viewModel() 
 ) {
-    // 2. Observa el estado del ViewModel
+   
     val uiState by viewModel.uiState.collectAsState()
 
-    // 3. Escucha los eventos de navegación (para navegar SÓLO cuando el VM lo ordene)
+   
     LaunchedEffect(Unit) {
         viewModel.navEvent.collect { event ->
             when (event) {
                 is LoginNavEvent.NavigateToHome -> {
                     navController.navigate(event.route) {
-                        // Limpia el stack para que no pueda volver al login con el botón "atrás"
+                       
                         popUpTo("login") { inclusive = true }
                     }
                 }
@@ -49,36 +49,36 @@ fun LoginScreen(
             Text("Iniciar sesión", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 4. Muestra el mensaje de error si existe
+            
             if (uiState.errorMensaje != null) {
                 Text(
-                    text = uiState.errorMensaje!!, // <-- El mensaje que pusiste en el VM
+                    text = uiState.errorMensaje!!, 
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
             }
 
             OutlinedTextField(
-                value = uiState.correo, // <-- Usa el estado del VM
-                onValueChange = { viewModel.onCorreoChange(it) }, // <-- Llama al VM
+                value = uiState.correo, 
+                onValueChange = { viewModel.onCorreoChange(it) },
                 label = { Text("Correo electrónico") },
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.errorMensaje != null // <-- Resalta el campo si hay error
+                isError = uiState.errorMensaje != null 
             )
 
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = uiState.contrasena, // <-- Usa el estado del VM
-                onValueChange = { viewModel.onContrasenaChange(it) }, // <-- Llama al VM
+                value = uiState.contrasena, 
+                onValueChange = { viewModel.onContrasenaChange(it) }, 
                 label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
-                isError = uiState.errorMensaje != null // <-- Resalta el campo si hay error
+                isError = uiState.errorMensaje != null 
             )
 
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { viewModel.onLoginClick() }, // <-- 5. Llama a la lógica de validación
+                onClick = { viewModel.onLoginClick() }, 
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Entrar")
