@@ -9,29 +9,29 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-// 1. Define el Estado de la UI
+
 data class LoginUiState(
     val correo: String = "",
     val contrasena: String = "",
     val errorMensaje: String? = null 
 )
 
-// 2. Define los Eventos de Navegación (para desacoplar)
+
 sealed class LoginNavEvent {
     data class NavigateToHome(val route: String) : LoginNavEvent()
 }
 
 class LoginViewModel : ViewModel() {
 
-    // 3. Expone el estado a la UI
+ 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState = _uiState.asStateFlow()
 
-    // 4. Expone los eventos de navegación (para que la UI reaccione)
+    
     private val _navEvent = MutableSharedFlow<LoginNavEvent>()
     val navEvent = _navEvent.asSharedFlow()
 
-    // 5. Funciones que la UI llamará
+   
     fun onCorreoChange(correo: String) {
         _uiState.update { it.copy(correo = correo, errorMensaje = null) }
     }
@@ -40,11 +40,11 @@ class LoginViewModel : ViewModel() {
         _uiState.update { it.copy(contrasena = contrasena, errorMensaje = null) }
     }
 
-    // 6. La lógica de validación
+  
     fun onLoginClick() {
         val estadoActual = _uiState.value
 
-        // Tu validación:
+       
         if (estadoActual.correo.isBlank() || estadoActual.contrasena.isBlank()) {
             _uiState.update {
                 it.copy(errorMensaje = "Debes rellenar todos los campos")
