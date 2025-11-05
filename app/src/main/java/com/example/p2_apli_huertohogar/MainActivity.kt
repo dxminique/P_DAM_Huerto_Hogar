@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                         composable("pedidos") { PedidosScreen(navController) }
                         composable("perfil") { PerfilScreen(navController) }
                         composable("carrito") { CarritoScreen(navController) }
-
+                        composable("camara") { CamaraScreen(navController) }
                     }
                 }
             }

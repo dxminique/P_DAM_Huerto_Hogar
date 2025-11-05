@@ -25,6 +25,15 @@ fun PerfilScreen(navController: NavController) {
                 text = "Perfil de Usuario",
                 style = MaterialTheme.typography.headlineSmall
             )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // ESTE ES EL BOTÓN NUEVO:
+            Button(
+                onClick = { navController.navigate("camara") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cambiar foto de perfil")
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Text("Nombre: Juan Pérez")
             Text("Correo: juanperez@huertohogar.cl")
