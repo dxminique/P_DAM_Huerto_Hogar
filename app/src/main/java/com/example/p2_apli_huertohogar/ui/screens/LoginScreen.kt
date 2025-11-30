@@ -70,5 +70,13 @@ fun LoginScreen(
                 Text("Iniciar sesión")
             }
         }
+        TextButton(
+            onClick = { navController.navigate("registro") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            Text("¿No tienes cuenta? Regístrate")
+        }
     }
 }

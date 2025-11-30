@@ -41,4 +41,24 @@ class AuthViewModel(
             }
         }
     }
+
+    fun register(nombre: String, email: String, password: String) {
+        uiState = uiState.copy(isLoading = true, error = null)
+
+        viewModelScope.launch {
+            try {
+                val response = repository.registro(nombre, email, password)
+                uiState = uiState.copy(
+                    isLoading = false,
+                    isLoggedIn = true,
+                    token = response.token
+                )
+            } catch (e: Exception) {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    error = e.message ?: "Error al registrar usuario"
+                )
+            }
+        }
+    }
 }
