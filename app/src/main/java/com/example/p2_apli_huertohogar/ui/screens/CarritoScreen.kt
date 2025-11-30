@@ -1,59 +1,100 @@
 package com.example.p2_apli_huertohogar.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
 
 @Composable
-fun CarritoScreen(navController: NavController) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF9FBE7)
+fun CarritoScreen(
+    navController: NavHostController,
+    pedidoViewModel: PedidoViewModel = viewModel()
+) {
+    val state = pedidoViewModel.uiState
+    val carrito = pedidoViewModel.carrito
+
+    val total = carrito.sumOf { it.producto.precio.toDouble() * it.cantidad }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+
+        if (carrito.isEmpty()) {
+            Text("Carrito vacío")
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                items(carrito) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Column(Modifier.padding(12.dp)) {
+                            Text(item.producto.nombre)
+                            Text("Cantidad: ${item.cantidad}")
+                            Text("Precio: ${item.producto.precio}")
+                            Text("Subtotal: ${item.producto.precio.toDouble() * item.cantidad}")
+                            Row {
+                                TextButton(
+                                    onClick = { pedidoViewModel.quitarDelCarrito(item.producto.id) }
+                                ) {
+                                    Text("Quitar")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Text(
-                text = "Carrito de compras",
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color(0xFF33691E)
+                text = "Total: $total",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(vertical = 8.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Tu carrito está vacío por ahora.",
-                color = Color.Gray
-            )
-            Text(
-                text = "Explora y conoce nuestros productos.",
-                color = Color.Gray
-            )
-            Text(
-                text = "🥬",
-                color = Color.Gray
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
+            if (state.error != null) {
+                Text(
+                    text = state.error ?: "",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
 
             Button(
-                onClick = { navController.navigate("pedidos") },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFE7A6),
-                    contentColor = Color(0xFF1B5E20)
-                ),
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    pedidoViewModel.confirmarPedido(
+                        emailCliente = "correo@usuario.cl",
+                        idUsuario = 1L
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                enabled = !state.isLoading && carrito.isNotEmpty()
             ) {
-                Text("Ver mis pedidos")
+                if (state.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text("Confirmar compra")
+                }
+            }
+
+            if (state.pedidoCreado != null) {
+                Text(
+                    text = "Pedido creado: #${state.pedidoCreado.id}",
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
     }

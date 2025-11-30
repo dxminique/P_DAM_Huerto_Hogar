@@ -2,28 +2,46 @@ package com.example.p2_apli_huertohogar.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.example.p2_apli_huertohogar.model.Producto
 import com.example.p2_apli_huertohogar.repository.ProductoRepository
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-
+import kotlinx.coroutines.launch
 
 data class ProductoUiState(
-    val productos: List<Producto> = emptyList()
+    val isLoading: Boolean = false,
+    val productos: List<Producto> = emptyList(),
+    val error: String? = null
 )
 
 class ProductoViewModel(
-    private val repo: ProductoRepository
-) : ViewModel() {
+    private val repository: ProductoRepository = ProductoRepository()
+): ViewModel() {
 
-    val uiState: StateFlow<ProductoUiState> =
-        repo.observeAll()
-            .map { lista -> ProductoUiState(productos = lista) }
-            .stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                ProductoUiState()
-            )
+    var uiState by mutableStateOf(ProductoUiState())
+        private set
+
+    init {
+        cargarProductos()
+    }
+
+    fun cargarProductos() {
+        uiState = uiState.copy(isLoading = true, error = null)
+
+        viewModelScope.launch {
+            try {
+                val lista = repository.getProductos()
+                uiState = uiState.copy(
+                    isLoading = false,
+                    productos = lista
+                )
+            } catch (e: Exception) {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    error = e.message
+                )
+            }
+        }
+    }
 }

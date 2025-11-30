@@ -1,9 +1,9 @@
 package com.example.p2_apli_huertohogar.model
 
-class Pedido (
-    val id: Int,
-    val fecha: String,
-    val usuario: Usuario,
-    val detalles: List<PedidoDetalle>,
-    val total: Double
-){}
+data class Pedido(
+    val id: Long? = null,
+    val emailCliente: String,
+    val fecha: String? = null,
+    val idUsuario: Long,
+    val detalles: List<DetallePedido>
+)

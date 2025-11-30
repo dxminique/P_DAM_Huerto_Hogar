@@ -1,7 +1,7 @@
 package com.example.p2_apli_huertohogar.model
 
-class PedidoDetalle (
-    val producto: Producto,
-    val cantidad: Int,
-    val precioUnitario: Double
-){}
+data class DetallePedido(
+    val id: Long? = null,
+    val idProducto: Long,
+    val cantidad: Int
+)
