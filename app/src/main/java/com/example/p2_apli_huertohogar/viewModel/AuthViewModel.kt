@@ -1,17 +1,21 @@
 package com.example.p2_apli_huertohogar.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.p2_apli_huertohogar.model.LoginRequest
+import com.example.p2_apli_huertohogar.model.RegisterRequest
 import com.example.p2_apli_huertohogar.repository.AuthRepository
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 data class AuthUiState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
+    val isRegistered: Boolean = false,
     val token: String? = null,
+    val emailUsuario: String? = null,
     val error: String? = null
 )
 
@@ -27,38 +31,61 @@ class AuthViewModel(
 
         viewModelScope.launch {
             try {
-                val response = repository.login(email, password)
+                val req = LoginRequest(email = email, password = password)
+                val resp = repository.login(req)
+
                 uiState = uiState.copy(
                     isLoading = false,
                     isLoggedIn = true,
-                    token = response.token
+                    token = resp.token,
+                    emailUsuario = email,
+                    error = null
                 )
+
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
+                    isLoggedIn = false,
                     error = e.message ?: "Error al iniciar sesión"
                 )
             }
         }
     }
 
-    fun register(nombre: String, email: String, password: String) {
+    fun registrar(nombre: String, email: String, password: String) {
         uiState = uiState.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
             try {
-                val response = repository.registro(nombre, email, password)
+                val req = RegisterRequest(
+                    nombre = nombre,
+                    email = email,
+                    password = password
+                )
+
+                repository.registrar(req)
+
                 uiState = uiState.copy(
                     isLoading = false,
-                    isLoggedIn = true,
-                    token = response.token
+                    isRegistered = true,
+                    emailUsuario = email
                 )
+
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
-                    error = e.message ?: "Error al registrar usuario"
+                    isRegistered = false,
+                    error = e.message ?: "Error al registrarse"
                 )
             }
         }
+    }
+
+    fun clearFlags() {
+        uiState = uiState.copy(
+            isLoggedIn = false,
+            isRegistered = false,
+            error = null
+        )
     }
 }

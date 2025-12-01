@@ -1,12 +1,13 @@
 package com.example.p2_apli_huertohogar.viewModel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.example.p2_apli_huertohogar.model.DetallePedido
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.p2_apli_huertohogar.model.Pedido
+import com.example.p2_apli_huertohogar.model.PedidoDetalle
 import com.example.p2_apli_huertohogar.model.Producto
 import com.example.p2_apli_huertohogar.repository.PedidoRepository
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ data class PedidoUiState(
     val error: String? = null
 )
 
-data class ItemCarrito(
+data class CarritoItem(
     val producto: Producto,
     val cantidad: Int
 )
@@ -29,44 +30,27 @@ class PedidoViewModel(
     var uiState by mutableStateOf(PedidoUiState())
         private set
 
-    var carrito by mutableStateOf<List<ItemCarrito>>(emptyList())
-        private set
+    val carrito = mutableStateListOf<CarritoItem>()
 
     fun agregarAlCarrito(producto: Producto) {
-        val existente = carrito.find { it.producto.id == producto.id }
-        carrito = if (existente != null) {
-            carrito.map {
-                if (it.producto.id == producto.id)
-                    it.copy(cantidad = it.cantidad + 1)
-                else it
-            }
+        val index = carrito.indexOfFirst { it.producto.id == producto.id }
+        if (index >= 0) {
+            val item = carrito[index]
+            carrito[index] = item.copy(cantidad = item.cantidad + 1)
         } else {
-            carrito + ItemCarrito(producto, 1)
+            carrito.add(CarritoItem(producto = producto, cantidad = 1))
         }
-    }
-
-    fun quitarDelCarrito(productoId: Long) {
-        val existente = carrito.find { it.producto.id == productoId } ?: return
-        carrito = if (existente.cantidad > 1) {
-            carrito.map {
-                if (it.producto.id == productoId)
-                    it.copy(cantidad = it.cantidad - 1)
-                else it
-            }
-        } else {
-            carrito.filterNot { it.producto.id == productoId }
-        }
-    }
-
-    fun vaciarCarrito() {
-        carrito = emptyList()
+        uiState = uiState.copy(
+            pedidoCreado = null,
+            error = null
+        )
     }
 
     fun confirmarPedido(emailCliente: String, idUsuario: Long) {
         if (carrito.isEmpty()) return
 
         val detalles = carrito.map {
-            DetallePedido(
+            PedidoDetalle(
                 id = null,
                 idProducto = it.producto.id,
                 cantidad = it.cantidad
@@ -81,7 +65,7 @@ class PedidoViewModel(
             detalles = detalles
         )
 
-        uiState = uiState.copy(isLoading = true, error = null, pedidoCreado = null)
+        uiState = uiState.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
             try {
@@ -98,5 +82,9 @@ class PedidoViewModel(
                 )
             }
         }
+    }
+
+    fun vaciarCarrito() {
+        carrito.clear()
     }
 }

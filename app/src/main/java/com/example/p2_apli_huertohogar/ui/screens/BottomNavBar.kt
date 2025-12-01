@@ -24,7 +24,7 @@ fun BottomNavBar(navController: NavController) {
     val items = listOf(
         NavItem("home", "Inicio", Icons.Filled.Home),
         NavItem("productos", "Productos", Icons.Filled.List),
-        NavItem("Carrito", "Pedidos", Icons.Filled.ShoppingCart),
+        NavItem("Carrito", "Carrito", Icons.Filled.ShoppingCart),
         NavItem("Perfil", "Perfil", Icons.Filled.AccountCircle)
     )
 

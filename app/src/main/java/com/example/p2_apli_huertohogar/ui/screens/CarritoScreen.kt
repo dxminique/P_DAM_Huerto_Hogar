@@ -1,31 +1,49 @@
 package com.example.p2_apli_huertohogar.ui.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
 
 @Composable
 fun CarritoScreen(
     navController: NavHostController,
-    pedidoViewModel: PedidoViewModel = viewModel()
+    pedidoViewModel: PedidoViewModel
 ) {
-    val state = pedidoViewModel.uiState
+    val uiState = pedidoViewModel.uiState
     val carrito = pedidoViewModel.carrito
 
-    val total = carrito.sumOf { it.producto.precio.toDouble() * it.cantidad }
+    val totalArticulos = carrito.sumOf { it.cantidad }
+    val totalPrecio = carrito.fold(0.0) { acc, item ->
+        acc + (item.producto.precio.toDouble() * item.cantidad)
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        Text(
+            text = "Tu carrito",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
 
         if (carrito.isEmpty()) {
             Text("Carrito vacío")
@@ -39,62 +57,73 @@ fun CarritoScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp)
+                            .padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
-                        Column(Modifier.padding(12.dp)) {
-                            Text(item.producto.nombre)
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(
+                                text = item.producto.nombre,
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Text("Cantidad: ${item.cantidad}")
-                            Text("Precio: ${item.producto.precio}")
-                            Text("Subtotal: ${item.producto.precio.toDouble() * item.cantidad}")
-                            Row {
-                                TextButton(
-                                    onClick = { pedidoViewModel.quitarDelCarrito(item.producto.id) }
-                                ) {
-                                    Text("Quitar")
-                                }
-                            }
+                            Text("Precio unitario: ${item.producto.precio}")
                         }
                     }
                 }
             }
 
-            Text(
-                text = "Total: $total",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            if (state.error != null) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = "Resumen",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text("Artículos: $totalArticulos")
+                    Text("Total: $totalPrecio")
+                }
+            }
+
+            if (uiState.pedidoCreado != null) {
                 Text(
-                    text = state.error ?: "",
-                    color = MaterialTheme.colorScheme.error
+                    text = "Compra realizada correctamente",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            if (uiState.error != null) {
+                Text(
+                    text = uiState.error ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp)
                 )
             }
 
             Button(
                 onClick = {
-                    pedidoViewModel.confirmarPedido(
-                        emailCliente = "correo@usuario.cl",
-                        idUsuario = 1L
-                    )
+                    val email = "test@correo.cl"
+                    val idUsuario = 1L
+                    pedidoViewModel.confirmarPedido(email, idUsuario)
                 },
+                enabled = carrito.isNotEmpty() && !uiState.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
-                enabled = !state.isLoading && carrito.isNotEmpty()
+                    .padding(top = 12.dp),
+                shape = RoundedCornerShape(30.dp)
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text("Confirmar compra")
-                }
-            }
-
-            if (state.pedidoCreado != null) {
-                Text(
-                    text = "Pedido creado: #${state.pedidoCreado.id}",
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Text("Confirmar compra")
             }
         }
     }

@@ -5,5 +5,5 @@ data class Pedido(
     val emailCliente: String,
     val fecha: String? = null,
     val idUsuario: Long,
-    val detalles: List<DetallePedido>
+    val detalles: List<PedidoDetalle>
 )

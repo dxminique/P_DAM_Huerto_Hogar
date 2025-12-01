@@ -1,19 +1,31 @@
 package com.example.p2_apli_huertohogar.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel
 ) {
     val state = authViewModel.uiState
 
@@ -21,62 +33,80 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     if (state.isLoggedIn) {
-        LaunchedEffect(state.isLoggedIn) {
+        LaunchedEffect(key1 = state.isLoggedIn) {
             navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
             }
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
     ) {
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Correo") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (state.error != null) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp)
+        ) {
             Text(
-                text = state.error,
-                color = MaterialTheme.colorScheme.error
+                text = "Iniciar sesión",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
             )
-        }
 
-        Button(
-            onClick = { authViewModel.login(email, password) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            enabled = !state.isLoading
-        ) {
-            if (state.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text("Iniciar sesión")
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Correo") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+            )
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Contraseña") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
+
+            if (state.error != null) {
+                Text(
+                    text = state.error ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
-        }
-        TextButton(
-            onClick = { navController.navigate("registro") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Text("¿No tienes cuenta? Regístrate")
+
+            Button(
+                onClick = { authViewModel.login(email, password) },
+                enabled = !state.isLoading && email.isNotBlank() && password.isNotBlank(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+            ) {
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(4.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Iniciar sesión")
+                }
+            }
+
+            Button(
+                onClick = { navController.navigate("registro") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            ) {
+                Text("Crear cuenta")
+            }
         }
     }
 }
