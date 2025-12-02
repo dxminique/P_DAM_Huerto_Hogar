@@ -11,6 +11,8 @@ import com.example.p2_apli_huertohogar.model.PedidoDetalle
 import com.example.p2_apli_huertohogar.model.Producto
 import com.example.p2_apli_huertohogar.repository.PedidoRepository
 import kotlinx.coroutines.launch
+import com.example.p2_apli_huertohogar.model.CrearPedidoDTO
+import com.example.p2_apli_huertohogar.model.ItemPedidoDTO
 
 data class PedidoUiState(
     val isLoading: Boolean = false,
@@ -40,6 +42,7 @@ class PedidoViewModel(
         } else {
             carrito.add(CarritoItem(producto = producto, cantidad = 1))
         }
+
         uiState = uiState.copy(
             pedidoCreado = null,
             error = null
@@ -49,36 +52,33 @@ class PedidoViewModel(
     fun confirmarPedido(emailCliente: String, idUsuario: Long) {
         if (carrito.isEmpty()) return
 
-        val detalles = carrito.map {
-            PedidoDetalle(
-                id = null,
+        val itemsDto = carrito.map {
+            ItemPedidoDTO(
                 idProducto = it.producto.id,
                 cantidad = it.cantidad
             )
         }
 
-        val pedido = Pedido(
-            id = null,
+        val dto = CrearPedidoDTO(
             emailCliente = emailCliente,
-            fecha = null,
-            idUsuario = idUsuario,
-            detalles = detalles
+            items = itemsDto
         )
 
         uiState = uiState.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
             try {
-                val creado = repository.crearPedido(pedido)
+                repository.confirmarPedido(dto)
                 uiState = uiState.copy(
                     isLoading = false,
-                    pedidoCreado = creado
+                    pedidoCreado = null,
+                    error = null
                 )
                 vaciarCarrito()
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
-                    error = e.message
+                    error = e.message ?: "Error al confirmar pedido"
                 )
             }
         }
