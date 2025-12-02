@@ -24,19 +24,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
+import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
+
 
 @Composable
 fun CarritoScreen(
     navController: NavHostController,
-    pedidoViewModel: PedidoViewModel
+    pedidoViewModel: PedidoViewModel,
+    authViewModel: AuthViewModel
 ) {
     val uiState = pedidoViewModel.uiState
     val carrito = pedidoViewModel.carrito
+    val authState = authViewModel.uiState
 
     val totalArticulos = carrito.sumOf { it.cantidad }
     val totalPrecio = carrito.fold(0.0) { acc, item ->
         acc + (item.producto.precio.toDouble() * item.cantidad)
     }
+
+    val emailUsuario = authState.emailUsuario ?: ""
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -149,11 +155,12 @@ fun CarritoScreen(
 
                 Button(
                     onClick = {
-                        val email = "test@correo.cl"
-                        val idUsuario = 1L
-                        pedidoViewModel.confirmarPedido(email, idUsuario)
+                        if (emailUsuario.isNotBlank()) {
+                            val idUsuario = 1L
+                            pedidoViewModel.confirmarPedido(emailUsuario, idUsuario)
+                        }
                     },
-                    enabled = carrito.isNotEmpty() && !uiState.isLoading,
+                    enabled = carrito.isNotEmpty() && !uiState.isLoading && emailUsuario.isNotBlank(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),

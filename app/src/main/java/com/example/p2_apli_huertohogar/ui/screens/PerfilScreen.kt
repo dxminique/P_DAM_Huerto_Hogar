@@ -20,7 +20,7 @@ import com.example.p2_apli_huertohogar.viewModel.VentaViewModel
 @Composable
 fun PerfilScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel(),
+    authViewModel: AuthViewModel,
     ventaViewModel: VentaViewModel = viewModel()
 ) {
     val authState = authViewModel.uiState
@@ -158,7 +158,12 @@ fun PerfilScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
-                onClick = { navController.navigate(route = "login") },
+                onClick = {
+                    authViewModel.clearFlags()
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFFD32F2F),
@@ -167,6 +172,7 @@ fun PerfilScreen(
             ) {
                 Text("Cerrar sesión")
             }
+
         }
     }
 }

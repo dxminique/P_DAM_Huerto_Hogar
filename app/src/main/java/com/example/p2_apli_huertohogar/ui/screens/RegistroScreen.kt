@@ -30,7 +30,7 @@ import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 @Composable
 fun RegistroScreen(
     navController: NavHostController,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel
 ) {
     val state = authViewModel.uiState
 

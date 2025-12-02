@@ -24,6 +24,8 @@ import com.example.p2_apli_huertohogar.ui.screens.RegistroScreen
 import com.example.p2_apli_huertohogar.ui.theme.P2_Apli_HuertoHogarTheme
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
+import com.example.p2_apli_huertohogar.viewModel.VentaViewModel
+import com.example.p2_apli_huertohogar.viewModel.ProductoViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +38,8 @@ class MainActivity : ComponentActivity() {
 
                 val authViewModel: AuthViewModel = viewModel()
                 val pedidoViewModel: PedidoViewModel = viewModel()
+                val ventaViewModel: VentaViewModel = viewModel()
+                val productoViewModel: ProductoViewModel = viewModel()
 
                 Scaffold(
                     bottomBar = {
@@ -56,19 +60,19 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(navController)
                         }
                         composable("registro") {
-                            RegistroScreen(navController)
+                            RegistroScreen(navController, authViewModel)
                         }
                         composable("productos") {
-                            ProductoScreen(navController, pedidoViewModel)
+                            ProductoScreen(navController, pedidoViewModel, productoViewModel)
                         }
                         composable("carrito") {
-                            CarritoScreen(navController, pedidoViewModel)
+                            CarritoScreen(navController, pedidoViewModel, authViewModel)
                         }
                         composable("pedidos") {
                             PedidosScreen(navController)
                         }
                         composable("perfil") {
-                            PerfilScreen(navController)
+                            PerfilScreen(navController, authViewModel, ventaViewModel)
                         }
                         composable("camara") {
                             CamaraScreen(navController)

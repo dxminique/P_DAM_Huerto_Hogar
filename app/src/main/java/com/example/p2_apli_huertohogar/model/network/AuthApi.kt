@@ -14,7 +14,7 @@ interface AuthApi {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
-    @POST("auth/register")
+    @POST("auth/registro")
     suspend fun registrar(@Body request: RegisterRequest): Usuario
 
     companion object {

@@ -14,9 +14,9 @@ data class AuthUiState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
     val isRegistered: Boolean = false,
-    val token: String? = null,
+    val error: String? = null,
     val emailUsuario: String? = null,
-    val error: String? = null
+    val idUsuario: Long? = null
 )
 
 class AuthViewModel(
@@ -31,22 +31,24 @@ class AuthViewModel(
 
         viewModelScope.launch {
             try {
-                val req = LoginRequest(email = email, password = password)
-                val resp = repository.login(req)
+                val req = LoginRequest(
+                    email = email,
+                    password = password
+                )
+
+
+                repository.login(req)
 
                 uiState = uiState.copy(
                     isLoading = false,
                     isLoggedIn = true,
-                    token = resp.token,
-                    emailUsuario = email,
-                    error = null
+                    emailUsuario = email
                 )
-
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
                     isLoggedIn = false,
-                    error = e.message ?: "Error al iniciar sesión"
+                    error = e.message ?: "Credenciales inválidas"
                 )
             }
         }
@@ -85,7 +87,9 @@ class AuthViewModel(
         uiState = uiState.copy(
             isLoggedIn = false,
             isRegistered = false,
-            error = null
+            error = null,
+            emailUsuario = null,
+            idUsuario = null
         )
     }
 }
