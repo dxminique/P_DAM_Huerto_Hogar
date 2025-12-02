@@ -6,17 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.p2_apli_huertohogar.model.Pedido
-import com.example.p2_apli_huertohogar.model.PedidoDetalle
-import com.example.p2_apli_huertohogar.model.Producto
+import com.example.p2_apli_huertohogar.model.*
 import com.example.p2_apli_huertohogar.repository.PedidoRepository
 import kotlinx.coroutines.launch
-import com.example.p2_apli_huertohogar.model.CrearPedidoDTO
-import com.example.p2_apli_huertohogar.model.ItemPedidoDTO
 
 data class PedidoUiState(
     val isLoading: Boolean = false,
-    val pedidoCreado: Pedido? = null,
+    val success: Boolean = false,
     val error: String? = null
 )
 
@@ -37,22 +33,24 @@ class PedidoViewModel(
     fun agregarAlCarrito(producto: Producto) {
         val index = carrito.indexOfFirst { it.producto.id == producto.id }
         if (index >= 0) {
-            val item = carrito[index]
-            carrito[index] = item.copy(cantidad = item.cantidad + 1)
+            carrito[index] = carrito[index].copy(cantidad = carrito[index].cantidad + 1)
         } else {
             carrito.add(CarritoItem(producto = producto, cantidad = 1))
         }
-
+    }
+    fun setError(msg: String) {
         uiState = uiState.copy(
-            pedidoCreado = null,
-            error = null
+            error = msg,
+            isLoading = false,
+            success = false
         )
     }
 
-    fun confirmarPedido(emailCliente: String, idUsuario: Long) {
+    fun confirmarPedido(emailCliente: String) {
+
         if (carrito.isEmpty()) return
 
-        val itemsDto = carrito.map {
+        val items = carrito.map {
             ItemPedidoDTO(
                 idProducto = it.producto.id,
                 cantidad = it.cantidad
@@ -61,7 +59,7 @@ class PedidoViewModel(
 
         val dto = CrearPedidoDTO(
             emailCliente = emailCliente,
-            items = itemsDto
+            items = items
         )
 
         uiState = uiState.copy(isLoading = true, error = null)
@@ -69,22 +67,20 @@ class PedidoViewModel(
         viewModelScope.launch {
             try {
                 repository.confirmarPedido(dto)
+
                 uiState = uiState.copy(
                     isLoading = false,
-                    pedidoCreado = null,
-                    error = null
+                    success = true
                 )
-                vaciarCarrito()
+
+                carrito.clear()
+
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
-                    error = e.message ?: "Error al confirmar pedido"
+                    error = e.message
                 )
             }
         }
-    }
-
-    fun vaciarCarrito() {
-        carrito.clear()
     }
 }

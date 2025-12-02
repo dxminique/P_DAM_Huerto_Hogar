@@ -1,77 +1,64 @@
 package com.example.p2_apli_huertohogar.ui.screens
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
-
+import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
 
 @Composable
 fun CarritoScreen(
     navController: NavHostController,
     pedidoViewModel: PedidoViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel = viewModel()
 ) {
     val uiState = pedidoViewModel.uiState
     val carrito = pedidoViewModel.carrito
     val authState = authViewModel.uiState
+    val emailUsuario = authState.emailUsuario ?: ""
 
     val totalArticulos = carrito.sumOf { it.cantidad }
     val totalPrecio = carrito.fold(0.0) { acc, item ->
         acc + (item.producto.precio.toDouble() * item.cantidad)
     }
 
-    val emailUsuario = authState.emailUsuario ?: ""
-
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFEFFBF3)
+        color = Color(0xFFF1F8E9)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+
             Text(
                 text = "Tu carrito",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFF1B5E20),
-                textAlign = TextAlign.Center,
+                color = Color(0xFF2E7D32),
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
             )
 
             if (carrito.isEmpty()) {
-                Text(
-                    text = "Carrito vacío",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFF757575),
+                Box(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 16.dp)
-                )
+                        .fillMaxWidth()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Carrito vacío")
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier
@@ -82,7 +69,7 @@ fun CarritoScreen(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                                .padding(vertical = 6.dp),
                             colors = CardDefaults.cardColors(
                                 containerColor = Color(0xFFE8F5E9)
                             ),
@@ -94,16 +81,11 @@ fun CarritoScreen(
                                 Text(
                                     text = item.producto.nombre,
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = Color(0xFF1B5E20)
-                                )
-                                Text(
-                                    text = "Cantidad: ${item.cantidad}",
                                     color = Color(0xFF2E7D32)
                                 )
-                                Text(
-                                    text = "Precio unitario: ${item.producto.precio}",
-                                    color = Color(0xFF2E7D32)
-                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("Cantidad: ${item.cantidad}")
+                                Text("Precio unitario: ${item.producto.precio}")
                             }
                         }
                     }
@@ -115,32 +97,27 @@ fun CarritoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp),
+                    shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFFC8E6C9)
-                    ),
-                    shape = RoundedCornerShape(16.dp)
+                        containerColor = Color(0xFFDFF0D8)
+                    )
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(
                             text = "Resumen",
                             style = MaterialTheme.typography.titleMedium,
-                            color = Color(0xFF1B5E20)
-                        )
-                        Text(
-                            text = "Artículos: $totalArticulos",
                             color = Color(0xFF2E7D32)
                         )
-                        Text(
-                            text = "Total: $totalPrecio",
-                            color = Color(0xFF2E7D32)
-                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text("Artículos: $totalArticulos")
+                        Text("Total: $totalPrecio")
                     }
                 }
 
-                if (uiState.pedidoCreado != null) {
+                if (uiState.success) {
                     Text(
                         text = "Compra realizada correctamente",
-                        color = Color(0xFF1B5E20),
+                        color = Color(0xFF2E7D32),
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
@@ -156,11 +133,12 @@ fun CarritoScreen(
                 Button(
                     onClick = {
                         if (emailUsuario.isNotBlank()) {
-                            val idUsuario = 1L
-                            pedidoViewModel.confirmarPedido(emailUsuario, idUsuario)
+                            pedidoViewModel.confirmarPedido(emailUsuario)
+                        } else {
+                            pedidoViewModel.setError("Debes iniciar sesión para confirmar la compra")
                         }
                     },
-                    enabled = carrito.isNotEmpty() && !uiState.isLoading && emailUsuario.isNotBlank(),
+                    enabled = carrito.isNotEmpty() && !uiState.isLoading,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
