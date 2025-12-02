@@ -1,17 +1,17 @@
 package com.example.p2_apli_huertohogar.viewModel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.p2_apli_huertohogar.model.Venta
 import com.example.p2_apli_huertohogar.repository.VentaRepository
 import kotlinx.coroutines.launch
 
 data class VentaUiState(
-    val ventas: List<Venta> = emptyList(),
     val isLoading: Boolean = false,
+    val ventas: List<Venta> = emptyList(),
     val error: String? = null
 )
 
@@ -22,41 +22,43 @@ class VentaViewModel(
     var uiState by mutableStateOf(VentaUiState())
         private set
 
+
     fun cargarVentas() {
         uiState = uiState.copy(isLoading = true, error = null)
-
         viewModelScope.launch {
             try {
                 val lista = repository.getVentas()
                 uiState = uiState.copy(
-                    ventas = lista,
-                    isLoading = false
+                    isLoading = false,
+                    ventas = lista
                 )
             } catch (e: Exception) {
                 uiState = uiState.copy(
-                    error = e.message,
-                    isLoading = false
+                    isLoading = false,
+                    error = e.message
                 )
             }
         }
     }
 
-    fun cargarVentasPorUsuario(email: String) {
-        uiState = uiState.copy(isLoading = true, error = null)
 
+    fun cargarHistorial(email: String) {
+        uiState = uiState.copy(isLoading = true, error = null)
         viewModelScope.launch {
             try {
+
                 val lista = repository.getVentasByUsuario(email)
                 uiState = uiState.copy(
-                    ventas = lista,
-                    isLoading = false
+                    isLoading = false,
+                    ventas = lista
                 )
             } catch (e: Exception) {
                 uiState = uiState.copy(
-                    error = e.message,
-                    isLoading = false
+                    isLoading = false,
+                    error = e.message
                 )
             }
         }
     }
+
 }

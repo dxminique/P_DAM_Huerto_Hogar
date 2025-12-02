@@ -6,17 +6,18 @@ import com.example.p2_apli_huertohogar.model.network.VentaApi
 
 class VentaRepository {
 
-    private val api = ApiClient.retrofit.create(VentaApi::class.java)
 
-    suspend fun getVentas(): List<Venta> {
-        return api.getVentas()
-    }
+    private val api: VentaApi = ApiClient.retrofit.create(VentaApi::class.java)
 
-    suspend fun getVentasByUsuario(email: String): List<Venta> {
-        return api.getVentasByUsuario(email)
-    }
 
-    suspend fun crearVenta(venta: Venta): Venta {
-        return api.crearVenta(venta)
-    }
+    suspend fun getVentas(): List<Venta> =
+        api.getVentas()
+
+
+    suspend fun getVentasByUsuario(email: String): List<Venta> =
+        api.getVentasByUsuario(email)
+
+
+    suspend fun crearVenta(venta: Venta): Venta =
+        api.crearVenta(venta)
 }

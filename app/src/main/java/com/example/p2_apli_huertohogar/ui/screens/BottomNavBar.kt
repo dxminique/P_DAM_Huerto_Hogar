@@ -9,7 +9,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.p2_apli_huertohogar.ui.theme.*
 
@@ -24,16 +23,17 @@ fun BottomNavBar(navController: NavController) {
     val items = listOf(
         NavItem("home", "Inicio", Icons.Filled.Home),
         NavItem("productos", "Productos", Icons.Filled.List),
-        NavItem("Carrito", "Carrito", Icons.Filled.ShoppingCart),
-        NavItem("Perfil", "Perfil", Icons.Filled.AccountCircle)
+        NavItem("carrito", "Carrito", Icons.Filled.ShoppingCart),
+        NavItem("perfil", "Perfil", Icons.Filled.AccountCircle)
     )
 
     NavigationBar(
-        containerColor =VerdePrincipal,
+        containerColor = VerdePrincipal,
         tonalElevation = 8.dp
     ) {
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry.value?.destination?.route
+
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.label) },

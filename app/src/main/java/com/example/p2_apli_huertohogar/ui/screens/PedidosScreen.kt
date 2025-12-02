@@ -15,6 +15,7 @@ import com.example.p2_apli_huertohogar.viewModel.VentaViewModel
 fun PedidosScreen(
     navController: NavHostController,
     ventaViewModel: VentaViewModel = viewModel()
+
 ) {
     val state = ventaViewModel.uiState
 
