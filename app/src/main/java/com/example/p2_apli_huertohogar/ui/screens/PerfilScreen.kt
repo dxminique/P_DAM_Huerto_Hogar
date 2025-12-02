@@ -1,39 +1,26 @@
 package com.example.p2_apli_huertohogar.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
-import com.example.p2_apli_huertohogar.viewModel.VentaViewModel
 
 @Composable
 fun PerfilScreen(
     navController: NavController,
-    authViewModel: AuthViewModel,
-    ventaViewModel: VentaViewModel = viewModel()
+    authViewModel: AuthViewModel
 ) {
     val authState = authViewModel.uiState
-    val ventaState = ventaViewModel.uiState
 
     val email = authState.emailUsuario ?: ""
     val nombre = email.substringBefore("@").ifBlank { "Usuario HuertoHogar" }
-
-    LaunchedEffect(key1 = email) {
-        if (email.isNotBlank()) {
-            ventaViewModel.cargarHistorial(email)
-        }
-    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -80,69 +67,12 @@ fun PerfilScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            when {
-                ventaState.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(color = Color(0xFF4CAF50))
-                    }
-                }
+            Text(
+                text = "En esta versión de la app no se muestra el historial de compras.",
+                style = MaterialTheme.typography.bodyMedium
+            )
 
-                ventaState.error != null -> {
-                    Text(
-                        text = ventaState.error ?: "",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-
-                ventaState.ventas.isEmpty() -> {
-                    Text("No tienes compras registradas.")
-                }
-
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    ) {
-                        items(ventaState.ventas) { venta ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color(0xFFE3F2FD)
-                                )
-                            ) {
-                                Column(
-                                    modifier = Modifier.padding(12.dp)
-                                ) {
-                                    Text(
-                                        text = "Pedido #${venta.pedidoId ?: venta.id}",
-                                        style = MaterialTheme.typography.titleSmall,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                    Text(
-                                        text = "Fecha: ${venta.fechaVenta}",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                    Text(
-                                        text = "Total: ${venta.total}",
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = { navController.navigate("camara") },
@@ -172,7 +102,6 @@ fun PerfilScreen(
             ) {
                 Text("Cerrar sesión")
             }
-
         }
     }
 }

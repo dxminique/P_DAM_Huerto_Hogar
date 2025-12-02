@@ -17,14 +17,12 @@ import com.example.p2_apli_huertohogar.ui.screens.CamaraScreen
 import com.example.p2_apli_huertohogar.ui.screens.CarritoScreen
 import com.example.p2_apli_huertohogar.ui.screens.HomeScreen
 import com.example.p2_apli_huertohogar.ui.screens.LoginScreen
-import com.example.p2_apli_huertohogar.ui.screens.PedidosScreen
 import com.example.p2_apli_huertohogar.ui.screens.PerfilScreen
 import com.example.p2_apli_huertohogar.ui.screens.ProductoScreen
 import com.example.p2_apli_huertohogar.ui.screens.RegistroScreen
 import com.example.p2_apli_huertohogar.ui.theme.P2_Apli_HuertoHogarTheme
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
-import com.example.p2_apli_huertohogar.viewModel.VentaViewModel
 import com.example.p2_apli_huertohogar.viewModel.ProductoViewModel
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +36,6 @@ class MainActivity : ComponentActivity() {
 
                 val authViewModel: AuthViewModel = viewModel()
                 val pedidoViewModel: PedidoViewModel = viewModel()
-                val ventaViewModel: VentaViewModel = viewModel()
                 val productoViewModel: ProductoViewModel = viewModel()
 
                 Scaffold(
@@ -68,11 +65,8 @@ class MainActivity : ComponentActivity() {
                         composable("carrito") {
                             CarritoScreen(navController, pedidoViewModel, authViewModel)
                         }
-                        composable("pedidos") {
-                            PedidosScreen(navController)
-                        }
                         composable("perfil") {
-                            PerfilScreen(navController, authViewModel, ventaViewModel)
+                            PerfilScreen(navController, authViewModel)
                         }
                         composable("camara") {
                             CamaraScreen(navController)
