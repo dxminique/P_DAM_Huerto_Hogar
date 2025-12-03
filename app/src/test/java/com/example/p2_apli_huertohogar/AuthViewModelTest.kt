@@ -27,12 +27,12 @@ class AuthViewModelTest {
     fun login_ok() = runTest {
         val repo = mock<AuthRepository>()
 
-        // Tu backend devuelve SOLO token, así que respetamos eso.
+
         val fakeResponse = LoginResponse(
             token = "FAKE_TOKEN"
         )
 
-        // login(request: LoginRequest): LoginResponse
+
         whenever(repo.login(any<LoginRequest>()))
             .thenReturn(fakeResponse)
 
@@ -43,7 +43,7 @@ class AuthViewModelTest {
 
         val state = vm.uiState
 
-        // No dependemos de campos que NO existen en LoginResponse
+
         assertTrue(state.isLoggedIn)
         assertFalse(state.isLoading)
         assertNull(state.error)
@@ -82,7 +82,7 @@ class AuthViewModelTest {
             direccion = "Santiago"
         )
 
-        // registrar(request: RegisterRequest): Usuario
+
         whenever(repo.registrar(any<RegisterRequest>()))
             .thenReturn(fakeUsuario)
 

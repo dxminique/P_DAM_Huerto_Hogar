@@ -33,7 +33,7 @@ class AuthViewModelRegisterTest {
             direccion = "Santiago"
         )
 
-        // registrar(request: RegisterRequest): Usuario
+
         whenever(repo.registrar(any<RegisterRequest>()))
             .thenReturn(fakeUsuario)
 
