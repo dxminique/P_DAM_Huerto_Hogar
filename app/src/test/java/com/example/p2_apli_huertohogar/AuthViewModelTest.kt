@@ -15,7 +15,7 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-//aca esta el test
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
 
