@@ -9,7 +9,7 @@ import com.example.p2_apli_huertohogar.model.LoginRequest
 import com.example.p2_apli_huertohogar.model.RegisterRequest
 import com.example.p2_apli_huertohogar.repository.AuthRepository
 import kotlinx.coroutines.launch
-
+//comienza el view
 data class AuthUiState(
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
