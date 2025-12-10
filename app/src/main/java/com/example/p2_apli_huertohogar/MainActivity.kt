@@ -20,6 +20,7 @@ import com.example.p2_apli_huertohogar.ui.screens.LoginScreen
 import com.example.p2_apli_huertohogar.ui.screens.PerfilScreen
 import com.example.p2_apli_huertohogar.ui.screens.ProductoScreen
 import com.example.p2_apli_huertohogar.ui.screens.RegistroScreen
+import com.example.p2_apli_huertohogar.ui.screens.UbicacionScreen
 import com.example.p2_apli_huertohogar.ui.theme.P2_Apli_HuertoHogarTheme
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
@@ -71,6 +72,10 @@ class MainActivity : ComponentActivity() {
                         composable("camara") {
                             CamaraScreen(navController)
                         }
+                        composable("ubicacion") {
+                            UbicacionScreen(navController)
+                        }
+
                     }
                 }
             }

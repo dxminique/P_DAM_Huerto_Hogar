@@ -55,10 +55,23 @@ fun PerfilScreen(
                 }
             }
 
-           
 
             Button(
-                onClick = { navController.navigate("camara") },
+                onClick = { navController.navigate("ubicacion") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF81C784),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Ver mi ubicación actual")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = { navController.navigate("Camara") },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF81C784),

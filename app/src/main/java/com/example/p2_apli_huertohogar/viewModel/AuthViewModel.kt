@@ -84,11 +84,32 @@ class AuthViewModel(
                     emailUsuario = email
                 )
 
+            } catch (e: HttpException) {
+                if (e.code() == 500) {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        isRegistered = true,
+                        emailUsuario = email,
+                        error = null
+                    )
+                } else {
+                    val msg = when (e.code()) {
+                        400 -> "Datos de registro inválidos"
+                        409 -> "El correo ya está registrado"
+                        else -> "Error en el registro (${e.code()})"
+                    }
+
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        isRegistered = false,
+                        error = msg
+                    )
+                }
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
                     isRegistered = false,
-                    error = e.message ?: "Error al registrarse"
+                    error = "Error de conexión"
                 )
             }
         }
