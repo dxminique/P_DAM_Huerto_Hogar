@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 
@@ -38,7 +37,6 @@ fun RegistroScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var password2 by remember { mutableStateOf("") }
-    var formError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(state.isRegistered) {
         if (state.isRegistered) {
@@ -107,14 +105,6 @@ fun RegistroScreen(
                     .padding(bottom = 16.dp)
             )
 
-            if (formError != null) {
-                Text(
-                    text = formError ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-
             if (state.error != null) {
                 Text(
                     text = state.error ?: "",
@@ -131,15 +121,7 @@ fun RegistroScreen(
             } else {
                 Button(
                     onClick = {
-                        formError = null
-
-                        if (nombre.isBlank() || email.isBlank() || password.isBlank() || password2.isBlank()) {
-                            formError = "Completa todos los campos"
-                        } else if (password != password2) {
-                            formError = "Las contraseñas no coinciden"
-                        } else {
-                            authViewModel.registrar(nombre, email, password)
-                        }
+                        authViewModel.registrar(nombre, email, password, password2)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

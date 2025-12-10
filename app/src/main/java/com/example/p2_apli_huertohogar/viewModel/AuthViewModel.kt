@@ -28,11 +28,24 @@ class AuthViewModel(
         private set
 
     fun login(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            uiState = uiState.copy(
+                isLoading = false,
+                isLoggedIn = false,
+                error = "Completa correo y contraseña"
+            )
+            return
+        }
+
         uiState = uiState.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
             try {
-                val req = LoginRequest(email = email, password = password)
+                val req = LoginRequest(
+                    email = email,
+                    password = password
+                )
+
                 repository.login(req)
 
                 uiState = uiState.copy(
@@ -46,7 +59,7 @@ class AuthViewModel(
                     400, 401 -> "Correo o contraseña incorrectos"
                     404 -> "Usuario no encontrado"
                     500 -> "Error interno del servidor"
-                    else -> "Error desconocido (${e.code()})"
+                    else -> "Error en el servidor (${e.code()})"
                 }
 
                 uiState = uiState.copy(
@@ -65,7 +78,25 @@ class AuthViewModel(
         }
     }
 
-    fun registrar(nombre: String, email: String, password: String) {
+    fun registrar(nombre: String, email: String, password: String, password2: String) {
+        if (nombre.isBlank() || email.isBlank() || password.isBlank() || password2.isBlank()) {
+            uiState = uiState.copy(
+                isLoading = false,
+                isRegistered = false,
+                error = "Completa todos los campos"
+            )
+            return
+        }
+
+        if (password != password2) {
+            uiState = uiState.copy(
+                isLoading = false,
+                isRegistered = false,
+                error = "Las contraseñas no coinciden"
+            )
+            return
+        }
+
         uiState = uiState.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
@@ -85,26 +116,18 @@ class AuthViewModel(
                 )
 
             } catch (e: HttpException) {
-                if (e.code() == 500) {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        isRegistered = true,
-                        emailUsuario = email,
-                        error = null
-                    )
-                } else {
-                    val msg = when (e.code()) {
-                        400 -> "Datos de registro inválidos"
-                        409 -> "El correo ya está registrado"
-                        else -> "Error en el registro (${e.code()})"
-                    }
-
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        isRegistered = false,
-                        error = msg
-                    )
+                val msg = when (e.code()) {
+                    409 -> "El correo ya está registrado"
+                    500 -> "Error interno del servidor"
+                    else -> "Error en el servidor (${e.code()})"
                 }
+
+                uiState = uiState.copy(
+                    isLoading = false,
+                    isRegistered = false,
+                    error = msg
+                )
+
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,

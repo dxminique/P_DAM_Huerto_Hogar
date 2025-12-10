@@ -91,7 +91,7 @@ fun LoginScreen(
 
             Button(
                 onClick = { authViewModel.login(email, password) },
-                enabled = !state.isLoading && email.isNotBlank() && password.isNotBlank(),
+                enabled = !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 24.dp),
