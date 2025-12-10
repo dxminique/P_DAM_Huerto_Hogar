@@ -9,6 +9,7 @@ import com.example.p2_apli_huertohogar.model.LoginRequest
 import com.example.p2_apli_huertohogar.model.RegisterRequest
 import com.example.p2_apli_huertohogar.repository.AuthRepository
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 data class AuthUiState(
     val isLoading: Boolean = false,
@@ -31,12 +32,7 @@ class AuthViewModel(
 
         viewModelScope.launch {
             try {
-                val req = LoginRequest(
-                    email = email,
-                    password = password
-                )
-
-
+                val req = LoginRequest(email = email, password = password)
                 repository.login(req)
 
                 uiState = uiState.copy(
@@ -44,11 +40,26 @@ class AuthViewModel(
                     isLoggedIn = true,
                     emailUsuario = email
                 )
+
+            } catch (e: HttpException) {
+                val msg = when (e.code()) {
+                    400, 401 -> "Correo o contraseña incorrectos"
+                    404 -> "Usuario no encontrado"
+                    500 -> "Error interno del servidor"
+                    else -> "Error desconocido (${e.code()})"
+                }
+
+                uiState = uiState.copy(
+                    isLoading = false,
+                    isLoggedIn = false,
+                    error = msg
+                )
+
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
                     isLoggedIn = false,
-                    error = e.message ?: "Credenciales inválidas"
+                    error = "Error de conexión"
                 )
             }
         }

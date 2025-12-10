@@ -1,12 +1,15 @@
 package com.example.p2_apli_huertohogar.repository
 
 import com.example.p2_apli_huertohogar.model.Usuario
+import com.example.p2_apli_huertohogar.model.network.ApiClient
+import com.example.p2_apli_huertohogar.model.network.UsuarioApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 interface UsuarioRepository {
     fun observeAll(): Flow<List<Usuario>>
+    suspend fun obtenerPorEmail(email: String): Usuario?
 }
 
 class InMemoryUsuarioRepository : UsuarioRepository {
@@ -22,4 +25,22 @@ class InMemoryUsuarioRepository : UsuarioRepository {
     )
 
     override fun observeAll(): Flow<List<Usuario>> = _usuarios.asStateFlow()
+
+    override suspend fun obtenerPorEmail(email: String): Usuario? {
+        return _usuarios.value.firstOrNull { it.correo == email }
+    }
+}
+
+class RemoteUsuarioRepository : UsuarioRepository {
+
+    private val api = ApiClient.retrofit.create(UsuarioApi::class.java)
+    private val cache = MutableStateFlow<List<Usuario>>(emptyList())
+
+    override fun observeAll(): Flow<List<Usuario>> = cache.asStateFlow()
+
+    override suspend fun obtenerPorEmail(email: String): Usuario? {
+        val usuario = api.getUsuarioPorEmail(email)
+        cache.value = cache.value.filterNot { it.id == usuario.id } + usuario
+        return usuario
+    }
 }

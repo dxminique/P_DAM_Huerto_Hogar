@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,12 +14,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.p2_apli_huertohogar.viewModel.AuthViewModel
 import com.example.p2_apli_huertohogar.viewModel.PedidoViewModel
+import com.example.p2_apli_huertohogar.viewModel.ProductoViewModel
 
 @Composable
 fun CarritoScreen(
     navController: NavHostController,
     pedidoViewModel: PedidoViewModel,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    productoViewModel: ProductoViewModel = viewModel()
 ) {
     val uiState = pedidoViewModel.uiState
     val carrito = pedidoViewModel.carrito
@@ -31,16 +33,34 @@ fun CarritoScreen(
         acc + (item.producto.precio.toDouble() * item.cantidad)
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF1F8E9)
-    ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) {
+            productoViewModel.cargarProductos()
+            snackbarHostState.showSnackbar("Compra realizada con éxito")
+            pedidoViewModel.consumirSuccess()
+        }
+    }
+
+    LaunchedEffect(uiState.error) {
+        val error = uiState.error
+        if (error != null) {
+            snackbarHostState.showSnackbar("Error: $error")
+            pedidoViewModel.consumirError()
+        }
+    }
+
+    Scaffold(
+        containerColor = Color(0xFFF1F8E9),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(padding)
                 .padding(16.dp)
         ) {
-
             Text(
                 text = "Tu carrito",
                 style = MaterialTheme.typography.headlineMedium,
@@ -112,22 +132,6 @@ fun CarritoScreen(
                         Text("Artículos: $totalArticulos")
                         Text("Total: $totalPrecio")
                     }
-                }
-
-                if (uiState.success) {
-                    Text(
-                        text = "Compra realizada correctamente",
-                        color = Color(0xFF2E7D32),
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
-
-                if (uiState.error != null) {
-                    Text(
-                        text = uiState.error ?: "",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
                 }
 
                 Button(

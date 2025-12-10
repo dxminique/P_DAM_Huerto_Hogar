@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.p2_apli_huertohogar.model.*
+import com.example.p2_apli_huertohogar.model.CrearPedidoDTO
+import com.example.p2_apli_huertohogar.model.ItemPedidoDTO
+import com.example.p2_apli_huertohogar.model.Producto
 import com.example.p2_apli_huertohogar.repository.PedidoRepository
 import kotlinx.coroutines.launch
 
@@ -38,6 +40,7 @@ class PedidoViewModel(
             carrito.add(CarritoItem(producto = producto, cantidad = 1))
         }
     }
+
     fun setError(msg: String) {
         uiState = uiState.copy(
             error = msg,
@@ -47,8 +50,10 @@ class PedidoViewModel(
     }
 
     fun confirmarPedido(emailCliente: String) {
-
-        if (carrito.isEmpty()) return
+        if (carrito.isEmpty()) {
+            setError("El carrito está vacío")
+            return
+        }
 
         val items = carrito.map {
             ItemPedidoDTO(
@@ -62,7 +67,11 @@ class PedidoViewModel(
             items = items
         )
 
-        uiState = uiState.copy(isLoading = true, error = null)
+        uiState = uiState.copy(
+            isLoading = true,
+            error = null,
+            success = false
+        )
 
         viewModelScope.launch {
             try {
@@ -70,7 +79,8 @@ class PedidoViewModel(
 
                 uiState = uiState.copy(
                     isLoading = false,
-                    success = true
+                    success = true,
+                    error = null
                 )
 
                 carrito.clear()
@@ -78,9 +88,18 @@ class PedidoViewModel(
             } catch (e: Exception) {
                 uiState = uiState.copy(
                     isLoading = false,
-                    error = e.message
+                    success = false,
+                    error = e.message ?: "Error al confirmar pedido"
                 )
             }
         }
+    }
+
+    fun consumirSuccess() {
+        uiState = uiState.copy(success = false)
+    }
+
+    fun consumirError() {
+        uiState = uiState.copy(error = null)
     }
 }

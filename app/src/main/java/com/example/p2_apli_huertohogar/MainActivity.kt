@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                             ProductoScreen(navController, pedidoViewModel, productoViewModel)
                         }
                         composable("carrito") {
-                            CarritoScreen(navController, pedidoViewModel, authViewModel)
+                            CarritoScreen(navController, pedidoViewModel, authViewModel, productoViewModel)
                         }
                         composable("perfil") {
                             PerfilScreen(navController, authViewModel)
